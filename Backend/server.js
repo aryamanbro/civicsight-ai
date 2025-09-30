@@ -22,7 +22,7 @@ const jwt = require('jsonwebtoken');
 // Import models, middleware, and controllers
 const { Report } = require('./src/models');
 const { authMiddleware } = require('./src/middleware');
-const { authController } = require('./src/controllers');
+const { authController, reportController } = require('./src/controllers');
 
 // Initialize Express app
 const app = express();
@@ -213,6 +213,12 @@ app.get('/api/auth/profile', authMiddleware.authenticateToken, authController.ge
 app.put('/api/auth/profile', authMiddleware.authenticateToken, authController.updateProfile);
 app.get('/api/auth/users', authController.getAllUsers); // For testing purposes
 
+// Report API routes (B-05, B-06)
+app.post('/api/reports', authMiddleware.authenticateToken, reportController.createReport);
+app.get('/api/reports', authMiddleware.authenticateToken, reportController.getUserReports);
+app.get('/api/reports/:id', authMiddleware.authenticateToken, reportController.getReportById);
+app.put('/api/reports/:id/status', authMiddleware.authenticateToken, reportController.updateReportStatus);
+
 // 404 handler for undefined routes
 app.use('*', (req, res) => {
   res.status(404).json({
@@ -231,7 +237,11 @@ app.use('*', (req, res) => {
       'POST /api/auth/login',
       'GET /api/auth/profile (requires Authorization header)',
       'PUT /api/auth/profile (requires Authorization header)',
-      'GET /api/auth/users'
+      'GET /api/auth/users',
+      'POST /api/reports (requires Authorization header)',
+      'GET /api/reports (requires Authorization header)',
+      'GET /api/reports/:id (requires Authorization header)',
+      'PUT /api/reports/:id/status (requires Authorization header)'
     ]
   });
 });
